@@ -10,6 +10,8 @@ export default function Header({onPopupEvent, searchButtonPressed}) {
   const [text,setText] = React.useState("")
   
   const search = () => {
+    if(text=='' || text == undefined || text == null) return
+
     searchButtonPressed(text);
     setText('');
     Keyboard.dismiss()

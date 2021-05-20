@@ -3,16 +3,17 @@ import { StyleSheet,
          FlatList,
          ToastAndroid,
          View } from 'react-native';
-
+import {connect} from 'react-redux'
 import PhotoCard from './PhotoCard'
-import { searchPhotos, } from './FlickrAPI'
 import Header from './header';
+import { fetchPhotos } from '../actions';
  
-export default class PhotosHomeScreen extends React.Component {
-  constructor() {
-    super() 
+class PhotosHomeScreen extends React.Component {
+
+    constructor(props) {
+    super(props) 
     this.state = {
-      photos: [], 
+      photos: this.props.photos,  
       text: '',
       keyword: 'cats',
       numColumns: 1,
@@ -20,49 +21,14 @@ export default class PhotosHomeScreen extends React.Component {
     }
   }
 
-  loadData = (results) => {
-      if(results.length < 1) {
-        ToastAndroid.showWithGravity(
-            "NO results found!",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
-            return
-        }
-      this.setState({
-        photos: results
-       })
-       console.log(this.state.keyword, this.state.page, 'LOAD-DATA')
-       console.log(this.state.photos);
-  }
-
-  addData = (results) => {
-    console.log(results);
-    if(results.length < 1) {
-        ToastAndroid.showWithGravity(
-            "Reached the end!",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
-            return
-        }
-    this.setState({
-      photos: [...this.state.photos,...results]
-     })
-     console.log(this.state.keyword, this.state.page, "ADD-DATA")
-     console.log(this.state.photos);
-}
    search = (keyword, page) => {
-    if(keyword == '') keyword='dogs'  
-    searchPhotos(keyword, page)
-    .then(this.loadData)
+       this.props.fetch(keyword, page)
   }
 
   onLoadMore = () => {
     let page = this.state.page + 1  
     this.setState({page: page})
-    searchPhotos(this.state.keyword, page)
-    .then(this.addData)
+    this.search(this.state.keyword, page)
   }
 
   searchButtonPressed = (text) => {
@@ -71,7 +37,7 @@ export default class PhotosHomeScreen extends React.Component {
    }
 
   componentDidMount(){
-      this.search('cats')
+      this.search('cats',1)
   }
   
   onPopupEvent = (eventName, index) => {
@@ -99,12 +65,12 @@ export default class PhotosHomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header onPopupEvent={this.onPopupEvent} searchButtonPressed={this.searchButtonPressed}/>
+        <Header onPopupEvent={this.onPopupEvent} 
+            searchButtonPressed={this.searchButtonPressed}/>
         <FlatList 
           key={this.state.numColumns}  
           numColumns={this.state.numColumns}  
-          extraData={this.state.refresh}
-          data={this.state.photos}
+          data={this.props.photos}
           renderItem={({item}) => <PhotoCard
                                     photo={item}
                                     numColumns={this.state.numColumns}
@@ -122,26 +88,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
-  item: {
-    fontSize: 25, 
-    padding: 10, 
-  }, 
-  input: {
-    backgroundColor: 'grey',
-    height: 60, 
-    fontSize: 20,
-    elevation: 1 
-  }, 
-  button: {
-    alignItems: 'center', 
-    justifyContent: 'center',
-    backgroundColor: 'orange', 
-    height: 47, 
-  }, 
-  buttonText: {
-    color: 'white', 
-    fontSize: 25, 
-    fontWeight: '900', 
-  }
 });
+
+function mapStateToProps(state) {
+    return {photos:state.photos}
+ }
+  
+function mapDispatchToProps(dispatch) {
+    return {
+      fetch: (keyword,page) => dispatch(fetchPhotos(keyword,page)) 
+    };
+  };
+
+export default connect(mapStateToProps, mapDispatchToProps)(PhotosHomeScreen)  

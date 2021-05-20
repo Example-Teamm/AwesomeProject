@@ -1,3 +1,8 @@
+// import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+
+// import Reactotron from 'reactotron-react-native'
+// Reactotron.log('hello rendering world')
+
 import './wdyr'; 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';

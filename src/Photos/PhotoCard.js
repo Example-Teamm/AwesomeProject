@@ -1,37 +1,61 @@
-    import React, { Component } from 'react'
-import { Image, 
+import React, { Component } from 'react'
+import {Dimensions} from 'react-native'
+import FastImage from 'react-native-fast-image'
+import {  
          View, 
-         Text,
          StyleSheet, 
          TouchableHighlight } from 'react-native'
 
 export default class PhotoCard extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      imageURL: {uri:"https://live.staticflickr.com/"
+    constructor(props) {
+    super(props) 
+    this.imageURL= {uri:"https://live.staticflickr.com/"
         +this.props.photo.server+"/"
         +this.props.photo.id+"_"
-        +this.props.photo.secret+"_w.jpg"},
-    }
-  }
-  
-  imageStyle = () => {
-    switch (this.props.numColumns) {
+        +this.props.photo.secret+"_w.jpg"}
+
+    this.numColumns = this.props.numColumns    
+    
+    this.height = Number(Dimensions.get('window').height)/this.numColumns
+    this.width = Number(Dimensions.get('window').width)/this.numColumns
+    switch(this.numColumns){
         case 1:
-            return styles.image1   
+            this.height -= 200
+            this.width -= 60
+            break
         case 2:
-            return styles.image2
-    } 
+            this.height -= 150
+            this.width -= 45
+            break
+        case 3:
+            this.height -= 80
+            this.width -= 35
+            break
+        case 4:
+            this.height -= 40
+            this.width -= 35
+            break            
+    }  
+  }  
+ 
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.props.photo == nextProps.photo && 
+        this.props.numColumns == nextProps.numColumns)
+         return false
+    else return true
   }
 
-  render() {
+  render() {      
+   
     return(
       <TouchableHighlight>
           <View style={styles.imageContainer}>
-            <Image key={this.imageStyle()}
-                style={this.imageStyle()}           
-                source={this.state.imageURL}/>
+            <FastImage
+                style={{
+                    height: this.height,
+                    width:this.width
+                }}           
+                source={this.imageURL}/>
             </View>
       </TouchableHighlight>
     )
@@ -39,35 +63,19 @@ export default class PhotoCard extends Component {
 }
 
 const styles = StyleSheet.create({
-  imageContainer:{
-    alignItems: 'center',
-    backgroundColor:'white',
-    marginTop: 25,
-    marginBottom: 5,
-    paddingHorizontal: 15,
-    paddingTop: 20,
-    paddingBottom: 40,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginHorizontal:10,
-    
-  },
-  image2: {
-    height: 150, 
-    width: '50%',    
-  }, 
-  image1: {
-    height: 300, 
-    width: '100%',    
-  }, 
-  title: {
-    fontSize: 25, 
-    fontWeight: '900', // 100 - 900
-    color: 'black'
-  }, 
-  description: {
-    fontSize: 25, 
-    color: 'orange', 
-    fontWeight: '600'
-  }
-})
+    imageContainer:{
+      alignItems: 'center',
+      backgroundColor:'white',
+      marginTop: '2%',
+      marginBottom: '5%',
+      paddingTop: '10%',
+      paddingBottom: '5%',
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      marginHorizontal:'3%',
+    },
+    image:{
+        width: 150,
+        height: 150
+    }
+  })  
