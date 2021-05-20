@@ -37,11 +37,12 @@ const ToDoHomeScreen = ({navigation}) => {
   );
 }
 
-const mapStateToProps = state => ({
-  todos: state.todos     
-})
+// const mapStateToProps = state => ({
+//   todos: state.todos     
+// })
 
-export default connect(mapStateToProps)(ToDoHomeScreen) 
+// export default connect(mapStateToProps)(ToDoHomeScreen) 
+export default ToDoHomeScreen
 
 const styles = StyleSheet.create({
   container: {

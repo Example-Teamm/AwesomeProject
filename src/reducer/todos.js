@@ -3,14 +3,13 @@ const initialState = [];
 const todos = (state= initialState, action) => {
 
     switch(action.type) {
-        case 'ADD_TODO':
+        case 'ADD_TODO_ASYNC':
             let id = 0
             if(state.length > 0) {
                 id = state[0].id + 1
             }
             const payload = {id: id, text:action.text, title:action.title}
-            return [payload,...state]
-            
+            return [payload,...state]    
         case 'UPDATE_TODO':
             let index = state.findIndex(element => element.id == action.id)
             const newState = [...state]
