@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import Box from './Box';
 
 
 export default function GameScreen() {
-
-  const [boxes, setBoxes] = useState(Array(9).fill(null));
-  const [isXChance, setIsXChance] = useState(true);
-  const [winner, setWinner] = useState(null);
+  
+  GameScreen.whyDidYouRender = true;
   const [header,setHeader] = useState('X chance');
+  const dispatch = useDispatch();
+  const {boxes, history, isXChance, winner} =  useSelector(state => state.game)
 
   function PlayBox(no) {
     return( 
       <Box 
         no={no}
-        boxInfo={{boxes, setBoxes}}
-        chance={{ isXChance, setIsXChance }}
-        winner={winner}
+        // boxInfo={boxes}
+        // chance={ isXChance }
+        // winner={winner}
+        // historyInfo ={history}
       />
     )
   }
@@ -32,14 +34,12 @@ export default function GameScreen() {
     setHeader(header);
     
     for (let i=0;  i<winPosition.length; i++) {
-      if( 
-        boxes[winPosition[i][0]] !== null &&
-        boxes[winPosition[i][0]] === boxes[winPosition[i][1]]
-        && boxes[winPosition[i][0]] === boxes[winPosition[i][2]]
-       ) {
-         setWinner(boxes[winPosition[i][0]]);
-         setHeader(boxes[winPosition[i][0]]+' Won!');
-         return;
+      if( boxes[winPosition[i][0]] !== null &&
+          boxes[winPosition[i][0]] === boxes[winPosition[i][1]] &&
+          boxes[winPosition[i][0]] === boxes[winPosition[i][2]]) {
+        dispatch({type:"WIN", winner:(boxes[winPosition[i][0]])});
+        setHeader(boxes[winPosition[i][0]]+' Won!');
+        return;
        }
     }
 
@@ -53,10 +53,11 @@ export default function GameScreen() {
   }, [isXChance])
 
   function resetValues() {
-    setWinner(null);
-    setBoxes(Array(9).fill(null));
-    setIsXChance(true);
-    setHeader('X chance');
+    dispatch({type:'RELOAD'})
+  }
+
+  function undo(){
+    dispatch({type:'UNDO'})
   }
 
   return (
@@ -65,7 +66,12 @@ export default function GameScreen() {
       <View style={styles.featureContainer}>
           <Text style={styles.primaryText}>{header}</Text> 
       </View>
-      <Button onPress={resetValues} title="Reload"></Button> 
+
+      <View style={styles.button}>
+        <Button onPress={resetValues} title="Reload"></Button> 
+        {history.length<1 ? null:<Button onPress={undo} title="Undo"></Button>} 
+      </View>
+      
       <View style={styles.playBoard}>
         <View style={styles.rows}>
           {PlayBox(0)}
@@ -98,7 +104,7 @@ const styles = StyleSheet.create({
   header:{
     fontSize: 45,
     fontWeight:'bold',
-    marginBottom:50
+    marginBottom:20
   }
   ,
   playBoard: {
@@ -127,4 +133,13 @@ const styles = StyleSheet.create({
     textAlign: 'center'
 
   },
+  button:{
+    flexDirection: 'row',
+    alignItems:'center',
+    width:'60%',
+    justifyContent:'space-evenly'
+  },
+  space:{
+    marginHorizontal:15
+  }
 });

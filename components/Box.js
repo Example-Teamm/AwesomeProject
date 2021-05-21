@@ -1,33 +1,27 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-// import { Entypo } from '@expo/vector-icons';
+import { useSelector,useDispatch } from 'react-redux';
 
-export default function Box({ no, boxInfo , chance, winner }) {
-
-    const { isXChance, setIsXChance } = chance;
-    const { boxes, setBoxes } = boxInfo;
+export default function Box({ no }) {
+    const {boxes, history, isXChance, winner} =  useSelector(state => state.game)
+    // const isXChance  = chance;
+    // const boxes  = boxInfo;
     const player = isXChance ? 'X' : 'O';
+    const index = history.findIndex(rank => rank == no)
+ 
+    const dispatch = useDispatch();
+    const onPress = () => {
+        if( boxes[no] === null && winner === null) 
+            dispatch({type:'TURN',no: no, player: player})    
+    }
 
     return (
-        <TouchableWithoutFeedback
-            onPress={() => {
-                if( boxes[no] === null && winner === null) {
-                    setBoxes((prevBoxInfo) => {
-                        prevBoxInfo[no] = player
-                        return prevBoxInfo;
-                    });
-                    setIsXChance((prevState) => !prevState)
-                }
-            }}
-        >
-            {boxes[no] !== null ? 
-            <View style={styles.boxView}>
-                { boxes[no] === 'X' ? 
-                <Text>X</Text>  
-                :<Text>O</Text>
-            } 
-            </View>
-            : <View style={styles.boxView}></View>
+        <TouchableWithoutFeedback onPress={onPress}>
+            { index !== -1 ? 
+                <View style={styles.boxView}>
+                    {index%2 == 0 ? <Text>X</Text> :<Text>O</Text>} 
+                </View>
+            :   <View style={styles.boxView}/> 
             }
         </TouchableWithoutFeedback>
     )
