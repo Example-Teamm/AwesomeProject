@@ -2,10 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { useSelector,useDispatch } from 'react-redux';
 
-export default function Box({ no }) {
-    const {boxes, history, isXChance, winner} =  useSelector(state => state.game)
-    // const isXChance  = chance;
-    // const boxes  = boxInfo;
+export default function Box({ no, boxes, history, isXChance, winner }) {
     const player = isXChance ? 'X' : 'O';
     const index = history.findIndex(rank => rank == no)
  
@@ -26,7 +23,6 @@ export default function Box({ no }) {
         </TouchableWithoutFeedback>
     )
 }
-
 
 const styles = StyleSheet.create({
     boxView: {

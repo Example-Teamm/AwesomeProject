@@ -15,10 +15,10 @@ export default function GameScreen() {
     return( 
       <Box 
         no={no}
-        // boxInfo={boxes}
-        // chance={ isXChance }
-        // winner={winner}
-        // historyInfo ={history}
+        boxes={boxes}
+        isXChance={ isXChance }
+        winner={winner}
+        history ={history}
       />
     )
   }
