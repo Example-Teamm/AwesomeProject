@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Box from './Box';
+import NewModuleButton from './nativeModuleButton';
 
 
 export default function GameScreen() {
@@ -63,6 +64,7 @@ export default function GameScreen() {
   return (
     <View style={styles.container}>
       <Text style = {styles.header}>Tic-Tac-Toe</Text>
+      <NewModuleButton/>
       <View style={styles.featureContainer}>
           <Text style={styles.primaryText}>{header}</Text> 
       </View>
